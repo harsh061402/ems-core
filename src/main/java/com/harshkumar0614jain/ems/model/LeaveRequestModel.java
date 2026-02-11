@@ -1,6 +1,6 @@
-package com.harshkumar0614jain.ems.modal;
+package com.harshkumar0614jain.ems.model;
 
-import com.harshkumar0614jain.ems.enums.LeaveStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.harshkumar0614jain.ems.enums.LeaveType;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -12,23 +12,23 @@ import java.time.LocalDate;
 
 @Data
 public class LeaveRequestModel {
-    @NotBlank
+    @NotBlank(message = "Tittle is mandatory")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Employee Id is mandatory")
     private String employeeId;
 
-    @NotNull
-    @FutureOrPresent
+    @NotNull(message = "Start Date is mandatory")
+    @FutureOrPresent(message = "Start Date must be future date")
     private LocalDate startDate;
 
-    @NotNull
-    @Future
+    @NotNull(message = "End Date is mandatory")
+    @Future(message = "End Date must be future date")
     private LocalDate endDate;
 
-    @NotNull
+    @NotNull(message = "Leave type is mandatory")
     private LeaveType leaveType;
 }

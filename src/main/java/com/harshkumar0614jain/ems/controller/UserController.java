@@ -1,8 +1,8 @@
 package com.harshkumar0614jain.ems.controller;
 
-import com.harshkumar0614jain.ems.modal.ResponseModel;
-import com.harshkumar0614jain.ems.modal.UserRequestModel;
-import com.harshkumar0614jain.ems.modal.UserResponseModel;
+import com.harshkumar0614jain.ems.model.ResponseModel;
+import com.harshkumar0614jain.ems.model.UserRequestModel;
+import com.harshkumar0614jain.ems.model.UserResponseModel;
 import com.harshkumar0614jain.ems.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,4 +40,8 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<ResponseModel<UserResponseModel>> updateUser(@RequestBody UserRequestModel userRequest){
+        
+    }
 }

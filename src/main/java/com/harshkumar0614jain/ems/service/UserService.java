@@ -3,8 +3,9 @@ package com.harshkumar0614jain.ems.service;
 import com.harshkumar0614jain.ems.entity.User;
 import com.harshkumar0614jain.ems.enums.Role;
 import com.harshkumar0614jain.ems.enums.UserStatus;
-import com.harshkumar0614jain.ems.modal.UserRequestModel;
-import com.harshkumar0614jain.ems.modal.UserResponseModel;
+import com.harshkumar0614jain.ems.exception.ResourceNotFoundException;
+import com.harshkumar0614jain.ems.model.UserRequestModel;
+import com.harshkumar0614jain.ems.model.UserResponseModel;
 import com.harshkumar0614jain.ems.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,8 @@ public class UserService {
     }
 
     public UserResponseModel getUserById(String id) {
-        User user = userRepository.findById(id).orElseThrow(()->new RuntimeException("User not found"));
+        User user = userRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("User not found with id " + id));
         return mapToResponse(user);
     }
 

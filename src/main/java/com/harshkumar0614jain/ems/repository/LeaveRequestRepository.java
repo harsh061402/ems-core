@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface LeaveRequestRepository extends MongoRepository<LeaveRequest,String> {
 
-//    List<LeaveRequest> findByEmployeeId(@Valid @PathVariable("employeeId") String employeeId);
     List<LeaveRequest> findByEmployeeId(String employeeId);
 
 }

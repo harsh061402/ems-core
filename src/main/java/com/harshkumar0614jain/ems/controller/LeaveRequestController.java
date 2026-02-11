@@ -1,9 +1,10 @@
 package com.harshkumar0614jain.ems.controller;
 
 import com.harshkumar0614jain.ems.enums.Role;
-import com.harshkumar0614jain.ems.modal.LeaveRequestModel;
-import com.harshkumar0614jain.ems.modal.LeaveResponseModel;
-import com.harshkumar0614jain.ems.modal.ResponseModel;
+import com.harshkumar0614jain.ems.model.LeaveDecisionRequestModel;
+import com.harshkumar0614jain.ems.model.LeaveRequestModel;
+import com.harshkumar0614jain.ems.model.LeaveResponseModel;
+import com.harshkumar0614jain.ems.model.ResponseModel;
 import com.harshkumar0614jain.ems.service.LeaveRequestService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,13 @@ public class LeaveRequestController {
     @Autowired
     private LeaveRequestService leaveRequestService;
 
+    @PostMapping
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> createLeaveRequest(@Valid @RequestBody LeaveRequestModel leaveRequestModel){
+        LeaveResponseModel leaveResponseModel = leaveRequestService.createLeaveRequest(leaveRequestModel);
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave Request Created Successfully", leaveResponseModel );
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping
     public ResponseEntity<ResponseModel<List<LeaveResponseModel>>> getAllLeaveRequests(
             @RequestParam Role role,
@@ -31,17 +39,20 @@ public class LeaveRequestController {
 
     }
 
-    @GetMapping("/{leaveId}")
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(@PathVariable String leaveId) {
-        LeaveResponseModel leaveDetails = leaveRequestService.getLeaveDetails(leaveId);
+    @GetMapping("/{leaveRequestId}")
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(@PathVariable String leaveRequestId) {
+        LeaveResponseModel leaveDetails = leaveRequestService.getLeaveDetails(leaveRequestId);
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave details is fetched successfully", leaveDetails);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> createLeaveRequest(@Valid @RequestBody LeaveRequestModel leaveRequestModel){
-        LeaveResponseModel leaveResponseModel = leaveRequestService.createLeaveRequest(leaveRequestModel);
-        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave Request Created Successfully", leaveResponseModel );
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @PatchMapping("/{leaveRequestId}/decision")
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> leaveRequestDecision(
+            @PathVariable String leaveRequestId,
+            @RequestBody LeaveDecisionRequestModel  decisionRequestModel) {
+        LeaveResponseModel updatedLeave = leaveRequestService.decideLeaveRequest(leaveRequestId,decisionRequestModel);
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave Request is updated",updatedLeave);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
     }
 }

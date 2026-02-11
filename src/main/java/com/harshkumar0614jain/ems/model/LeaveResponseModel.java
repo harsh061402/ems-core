@@ -1,12 +1,14 @@
-package com.harshkumar0614jain.ems.modal;
+package com.harshkumar0614jain.ems.model;
 
 import com.harshkumar0614jain.ems.enums.LeaveStatus;
 import com.harshkumar0614jain.ems.enums.LeaveType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +22,7 @@ public class LeaveResponseModel {
     private LocalDate endDate;
     private LeaveType leaveType;
     private LeaveStatus leaveStatus;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String managerComment;
 }

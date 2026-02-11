@@ -7,12 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-@Document(collation = "leave_requests")
+@Document(collection = "leave_requests")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,7 +38,17 @@ public class LeaveRequest {
     @NotNull
     private LocalDate endDate;
 
+    @NotNull
     private LeaveType leaveType;
 
+    @NotNull
     private LeaveStatus leaveStatus;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    private String managerComment;
 }
