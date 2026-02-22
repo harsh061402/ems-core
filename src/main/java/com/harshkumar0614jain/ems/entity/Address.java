@@ -1,17 +1,16 @@
 package com.harshkumar0614jain.ems.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
 
-@Document(collection = "address")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Address {
     private String street;
     private String city;
     private String state;
-    private String zip;
+    private String zipCode;
     private String country;
-
 }

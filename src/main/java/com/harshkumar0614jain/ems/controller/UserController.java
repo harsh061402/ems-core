@@ -1,6 +1,7 @@
 package com.harshkumar0614jain.ems.controller;
 
 import com.harshkumar0614jain.ems.model.ResponseModel;
+import com.harshkumar0614jain.ems.model.UserUpdateRequestModel;
 import com.harshkumar0614jain.ems.model.UserRequestModel;
 import com.harshkumar0614jain.ems.model.UserResponseModel;
 import com.harshkumar0614jain.ems.service.UserService;
@@ -20,28 +21,44 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ResponseModel<List<UserResponseModel>>> getAllUser(){
-        ResponseModel<List<UserResponseModel>> response = new ResponseModel<>("List of users",
-                userService.getAllUsers());
+
+        List<UserResponseModel> usersList = userService.getAllUsers();
+        ResponseModel<List<UserResponseModel>> response = new ResponseModel<>(
+                "List of users", usersList);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseModel<UserResponseModel>> getUser(@PathVariable String userId){
-        ResponseModel<UserResponseModel>  response = new ResponseModel<>("User is found",
-                userService.getUserById(userId));
+
+        UserResponseModel user = userService.getUserById(userId);
+        ResponseModel<UserResponseModel>  response = new ResponseModel<>(
+                "User is found", user);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ResponseModel<UserResponseModel>> createUser(@RequestBody UserRequestModel userRequest){
-        ResponseModel<UserResponseModel>  response = new ResponseModel<>("User is created successfully",
-                userService.createUser(userRequest));
+
+        UserResponseModel userCreated = userService.createUser(userRequest);
+        ResponseModel<UserResponseModel>  response = new ResponseModel<>(
+                "User is created successfully", userCreated);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/update")
-    public ResponseEntity<ResponseModel<UserResponseModel>> updateUser(@RequestBody UserRequestModel userRequest){
-        
+    @PatchMapping("/update/{userId}")
+    public ResponseEntity<ResponseModel<UserResponseModel>> updateUser(
+            @RequestBody UserUpdateRequestModel updateRequest,
+            @PathVariable String userId){
+
+        UserResponseModel userUpdated = userService.updateUser(updateRequest,userId);
+        ResponseModel<UserResponseModel>  response = new ResponseModel<>(
+                "User is updated successfully", userUpdated );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+//  delete user api
 }

@@ -10,7 +10,4 @@ public class ExceptionResponseModel {
     private String message;
     private Map<String,String> data;
 
-    public ExceptionResponseModel(String message) {
-        this.message = message;
-    }
 }

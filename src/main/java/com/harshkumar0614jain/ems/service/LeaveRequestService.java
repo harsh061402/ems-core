@@ -31,7 +31,7 @@ public class LeaveRequestService {
     }
 
     if(role==Role.EMPLOYEE && employeeId==null){
-        throw new ResourceNotFoundException("Employee Id is null");
+        throw new IllegalArgumentException("Employee Id is null");
     }
 
     if(role == Role.EMPLOYEE){
@@ -44,10 +44,10 @@ public class LeaveRequestService {
     }
 
 
-    public LeaveResponseModel createLeaveRequest(LeaveRequestModel leaveRequestModel){
+    public LeaveResponseModel createLeaveRequest(LeaveRequestModel requestModel){
 
-        LocalDate startDate = leaveRequestModel.getStartDate();
-        LocalDate endDate = leaveRequestModel.getEndDate();
+        LocalDate startDate = requestModel.getStartDate();
+        LocalDate endDate = requestModel.getEndDate();
 
         int leaveDays = endDate.compareTo(startDate);
         if (leaveDays < 0) {
@@ -59,15 +59,15 @@ public class LeaveRequestService {
 //            throw new IllegalArgumentException("Apply leave days should be less than remaining Balance");
 //        }
 
-        LeaveRequest leaveRequest = new LeaveRequest();
-
-        leaveRequest.setTitle(leaveRequestModel.getTitle());
-        leaveRequest.setDescription(leaveRequestModel.getDescription());
-        leaveRequest.setEmployeeId(leaveRequestModel.getEmployeeId());
-        leaveRequest.setStartDate(leaveRequestModel.getStartDate());
-        leaveRequest.setEndDate(leaveRequestModel.getEndDate());
-        leaveRequest.setLeaveType(leaveRequestModel.getLeaveType());
-        leaveRequest.setLeaveStatus(LeaveStatus.PENDING);
+        LeaveRequest leaveRequest = LeaveRequest.builder()
+                .title(requestModel.getTitle())
+                .description(requestModel.getDescription())
+                .employeeId(requestModel.getEmployeeId())
+                .startDate(requestModel.getStartDate())
+                .endDate(requestModel.getEndDate())
+                .leaveType(requestModel.getLeaveType())
+                .leaveStatus(LeaveStatus.PENDING)
+                .build();
 
         LeaveRequest response = leaveRequestRepository.save(leaveRequest);
 
@@ -76,38 +76,41 @@ public class LeaveRequestService {
 
     public LeaveResponseModel getLeaveDetails(String leaveRequestId) {
         LeaveRequest leaveRequest = leaveRequestRepository.findById(leaveRequestId)
-                .orElseThrow(()-> new ResourceNotFoundException("Leave request not found of id :"+ leaveRequestId));
+                .orElseThrow(()-> new ResourceNotFoundException("leaveRequestId",
+                        "Leave request not found of id :"+ leaveRequestId));
         return mapToResponse(leaveRequest);
     }
 
     private LeaveResponseModel mapToResponse(LeaveRequest leaveRequest) {
-        LeaveResponseModel leaveResponseModel = new LeaveResponseModel();
-        leaveResponseModel.setId(leaveRequest.getId());
-        leaveResponseModel.setTittle(leaveRequest.getTitle());
-        leaveResponseModel.setDescription(leaveRequest.getDescription());
-        leaveResponseModel.setEmpId(leaveRequest.getEmployeeId());
-        leaveResponseModel.setStartDate(leaveRequest.getStartDate());
-        leaveResponseModel.setEndDate(leaveRequest.getEndDate());
-        leaveResponseModel.setLeaveType(leaveRequest.getLeaveType());
-        leaveResponseModel.setLeaveStatus(leaveRequest.getLeaveStatus());
-        leaveResponseModel.setCreatedAt(leaveRequest.getCreatedAt());
-        leaveResponseModel.setUpdatedAt(leaveRequest.getUpdatedAt());
-        leaveResponseModel.setManagerComment(leaveRequest.getManagerComment());
-        return leaveResponseModel;
+        return   LeaveResponseModel.builder()
+                .id(leaveRequest.getId())
+                .tittle(leaveRequest.getTitle())
+                .description(leaveRequest.getDescription())
+                .employeeId(leaveRequest.getEmployeeId())
+                .startDate(leaveRequest.getStartDate())
+                .endDate(leaveRequest.getEndDate())
+                .leaveType(leaveRequest.getLeaveType())
+                .leaveStatus(leaveRequest.getLeaveStatus())
+                .createdAt(leaveRequest.getCreatedAt())
+                .updatedAt(leaveRequest.getUpdatedAt())
+                .managerComment(leaveRequest.getManagerComment())
+                .build();
+
     }
 
     public LeaveResponseModel decideLeaveRequest(String leaveRequestId,
-                                                 LeaveDecisionRequestModel decisionRequestModel) {
+                                                 LeaveDecisionRequestModel requestModel) {
 
-        if(decisionRequestModel.getLeaveStatus().equals(LeaveStatus.PENDING)){
+        if(requestModel.getLeaveStatus().equals(LeaveStatus.PENDING)){
             throw new IllegalArgumentException("Leave Status is already PENDING");
         }
 
         LeaveRequest leaveRequest = leaveRequestRepository.findById(leaveRequestId)
-                .orElseThrow(() -> new ResourceNotFoundException("Leave request not found of id :"+ leaveRequestId));
+                .orElseThrow(() -> new ResourceNotFoundException("leaveRequestId",
+                        "Leave request not found of id :"+ leaveRequestId));
 
-        leaveRequest.setLeaveStatus(decisionRequestModel.getLeaveStatus());
-        leaveRequest.setManagerComment(decisionRequestModel.getManagerComment());
+        leaveRequest.setLeaveStatus(requestModel.getLeaveStatus());
+        leaveRequest.setManagerComment(requestModel.getManagerComment());
 
         leaveRequestRepository.save(leaveRequest);
         return mapToResponse(leaveRequest);

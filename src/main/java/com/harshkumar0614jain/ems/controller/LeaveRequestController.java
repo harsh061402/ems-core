@@ -22,9 +22,15 @@ public class LeaveRequestController {
     private LeaveRequestService leaveRequestService;
 
     @PostMapping
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> createLeaveRequest(@Valid @RequestBody LeaveRequestModel leaveRequestModel){
-        LeaveResponseModel leaveResponseModel = leaveRequestService.createLeaveRequest(leaveRequestModel);
-        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave Request Created Successfully", leaveResponseModel );
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> createLeaveRequest(
+            @Valid @RequestBody LeaveRequestModel requestModel){
+
+        LeaveResponseModel leaveResponseModel = leaveRequestService
+                .createLeaveRequest(requestModel);
+
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
+                "Leave Request Created Successfully", leaveResponseModel );
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -33,26 +39,37 @@ public class LeaveRequestController {
             @RequestParam Role role,
             @RequestParam(required = false) String employeeId) {
 
-        List<LeaveResponseModel> list = leaveRequestService.findAllLeaveRequest(role,employeeId);
-        ResponseModel<List<LeaveResponseModel>> response = new ResponseModel<>("List retrieved successfully", list);
+        List<LeaveResponseModel> list = leaveRequestService
+                .findAllLeaveRequest(role,employeeId);
+
+        ResponseModel<List<LeaveResponseModel>> response = new ResponseModel<>(
+                "List retrieved successfully", list);
+
         return new ResponseEntity<>(response,HttpStatus.OK);
 
     }
 
     @GetMapping("/{leaveRequestId}")
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(@PathVariable String leaveRequestId) {
-        LeaveResponseModel leaveDetails = leaveRequestService.getLeaveDetails(leaveRequestId);
-        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave details is fetched successfully", leaveDetails);
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(
+            @PathVariable String leaveRequestId) {
+        LeaveResponseModel leaveDetails = leaveRequestService
+                .getLeaveDetails(leaveRequestId);
+
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
+                "Leave details is fetched successfully", leaveDetails);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PatchMapping("/{leaveRequestId}/decision")
     public ResponseEntity<ResponseModel<LeaveResponseModel>> leaveRequestDecision(
             @PathVariable String leaveRequestId,
-            @RequestBody LeaveDecisionRequestModel  decisionRequestModel) {
-        LeaveResponseModel updatedLeave = leaveRequestService.decideLeaveRequest(leaveRequestId,decisionRequestModel);
-        ResponseModel<LeaveResponseModel> response = new ResponseModel<>("Leave Request is updated",updatedLeave);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+            @RequestBody LeaveDecisionRequestModel  requestModel) {
 
+        LeaveResponseModel updatedLeave = leaveRequestService
+                .decideLeaveRequest(leaveRequestId,requestModel);
+
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
+                "Leave Request is updated",updatedLeave);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

@@ -1,44 +1,53 @@
 package com.harshkumar0614jain.ems.entity;
 
-import com.harshkumar0614jain.ems.enums.Gender;
 import com.harshkumar0614jain.ems.enums.Role;
 import com.harshkumar0614jain.ems.enums.UserStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Set;
 
-@Document(collection = "users")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@Document(collection = "users")
 public class User {
 
     @Id
     private String id;
 
-    @NotBlank
+    @Indexed(unique = true)
     private String userName;
 
-    @NotBlank
     private String password;
 
-    @NotBlank
+    @Indexed(unique = true)
     private String email;
 
-    @NotNull
-    private Role userRole;
+    private Set<Role> roles;
 
-    @NotNull
-    private UserStatus userStatus;
+    private UserStatus status;
 
     @CreatedDate
-    private LocalDateTime createdDate;
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
+
+    private Instant lastLoginDate;
+
 }
+
+
+
+
+
+
+
