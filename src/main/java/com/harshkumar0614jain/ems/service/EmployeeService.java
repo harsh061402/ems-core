@@ -11,7 +11,6 @@ import com.harshkumar0614jain.ems.model.EmployeeResponseModel;
 import com.harshkumar0614jain.ems.model.EmployeeUpdateRequestModel;
 import com.harshkumar0614jain.ems.repository.EmployeeRepository;
 import com.harshkumar0614jain.ems.repository.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

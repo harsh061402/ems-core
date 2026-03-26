@@ -1,11 +1,8 @@
 package com.harshkumar0614jain.ems.model;
 
-import com.harshkumar0614jain.ems.entity.Address;
-import com.harshkumar0614jain.ems.entity.Employee;
 import com.harshkumar0614jain.ems.enums.Department;
 import com.harshkumar0614jain.ems.enums.EmployeeStatus;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
