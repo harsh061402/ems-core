@@ -2,6 +2,7 @@ package com.harshkumar0614jain.ems.controller;
 
 import com.harshkumar0614jain.ems.model.EmployeeRequestModel;
 import com.harshkumar0614jain.ems.model.EmployeeResponseModel;
+import com.harshkumar0614jain.ems.model.EmployeeUpdateRequestModel;
 import com.harshkumar0614jain.ems.model.ResponseModel;
 import com.harshkumar0614jain.ems.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -44,4 +45,23 @@ public class EmployeeController {
                 "Employee retrieved successfully ",employee);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<ResponseModel<EmployeeResponseModel>> updateEmployee(
+            @PathVariable String id,
+            @Valid @RequestBody EmployeeUpdateRequestModel employeeUpdateRequest){
+
+        EmployeeResponseModel updatedEmployee = employeeService.updateEmployee(id,employeeUpdateRequest);
+        ResponseModel<EmployeeResponseModel> response = new ResponseModel<>(
+                "Employee updated successfully ",updatedEmployee);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseModel<Void>> deleteEmployee(@PathVariable String id){
+        employeeService.deleteEmployee(id);
+        ResponseModel<Void> response = new ResponseModel<>("Employee deleted successfully ",null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
