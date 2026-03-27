@@ -1,33 +1,37 @@
 package com.harshkumar0614jain.ems.entity;
 
-import com.harshkumar0614jain.ems.model.LeaveBalance;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.harshkumar0614jain.ems.enums.LeaveType;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.time.Instant;
 
 @Document(collection = "leave_allocations")
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class LeaveAllocation {
 
     @Id
     private String id;
-
     private String employeeId;
+    private LeaveType leaveType;
+    private int totalLeaves;
+    private int usedLeaves;
     private int year;
 
-    private List<LeaveBalance> leaveBalances;
+    @CreatedDate
+    private Instant createdAt;
 
-//    @Id private String id;
-//    private String employeeId;
-//    private LeaveType leaveType;
-//    private int totalLeaves;
-//    private int usedLeaves;
-//    private int remainingLeaves; // or compute it: totalLeaves - usedLeaves
-//    private int year;
+    @LastModifiedDate
+    private Instant updatedAt;
 
-
+    public int getRemainingLeaves() {
+        return totalLeaves - usedLeaves;
+    }
 }
