@@ -47,6 +47,14 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/department/{department}")
+    public ResponseEntity<ResponseModel<List<EmployeeResponseModel>>> getByDepartment(
+            @PathVariable Department department){
+        List<EmployeeResponseModel> departmentList = employeeService.findByDepartment(department);
+        ResponseModel<List<EmployeeResponseModel>> response = new ResponseModel<>(
+                "Employees retrieved successfully",departmentList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseModel<EmployeeResponseModel>> updateEmployee(
