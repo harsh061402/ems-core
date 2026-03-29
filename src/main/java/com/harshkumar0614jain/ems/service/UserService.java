@@ -2,6 +2,7 @@ package com.harshkumar0614jain.ems.service;
 
 import com.harshkumar0614jain.ems.entity.User;
 import com.harshkumar0614jain.ems.enums.UserStatus;
+import com.harshkumar0614jain.ems.exception.BusinessException;
 import com.harshkumar0614jain.ems.exception.ResourceAlreadyExistsException;
 import com.harshkumar0614jain.ems.exception.ResourceNotFoundException;
 import com.harshkumar0614jain.ems.model.UserRequestModel;
@@ -37,7 +38,7 @@ public class UserService {
     }
 
     public List<UserResponseModel> getAllUsers() {
-        return userRepository.findAll()
+        return userRepository.findByStatusNot(UserStatus.DELETED)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -58,7 +59,7 @@ public class UserService {
             throw new ResourceAlreadyExistsException("email","Email already exists");
 
         if(requestModel.getRoles().isEmpty())
-            throw new RuntimeException("User must have at least one role");
+            throw new BusinessException("roles","User must have at least one role");
 
         User user = User.builder()
                 .username(requestModel.getUsername())
@@ -81,9 +82,14 @@ public class UserService {
                 .orElseThrow(()->new ResourceNotFoundException(
                         "userId","User not found with id " + userId));
 
+//      Check user status is deleted or not
+        if(user.getStatus() == UserStatus.DELETED)
+            throw new BusinessException("userId",
+                    "Cannot update a deleted user");
+
         if(updateRequest.getRoles()!= null){
             if(updateRequest.getRoles().isEmpty())
-                throw new RuntimeException("User must have at least one role");
+                throw new BusinessException("roles","User must have at least one role");
 
             user.setRoles(updateRequest.getRoles());
         }
@@ -97,7 +103,13 @@ public class UserService {
 
     public void deleteUser(String userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(()->new ResourceNotFoundException("userId","User not found with id " + userId));
+                .orElseThrow(()->new ResourceNotFoundException(
+                        "userId","User not found with id " + userId));
+
+//      Check user status is deleted or not
+        if(user.getStatus() == UserStatus.DELETED)
+            throw new BusinessException("userId",
+                    "Cannot update a deleted user");
 
         user.setStatus(UserStatus.DELETED);
 
