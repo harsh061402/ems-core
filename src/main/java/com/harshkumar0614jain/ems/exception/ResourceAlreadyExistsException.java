@@ -3,9 +3,9 @@ package com.harshkumar0614jain.ems.exception;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
 @AllArgsConstructor
 public class ResourceAlreadyExistsException extends RuntimeException{
     private String key;

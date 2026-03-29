@@ -1,12 +1,8 @@
 package com.harshkumar0614jain.ems.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
 @AllArgsConstructor
 public class ResourceNotFoundException extends RuntimeException {
     private String key;
