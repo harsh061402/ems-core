@@ -2,7 +2,9 @@ package com.harshkumar0614jain.ems.service;
 
 import com.harshkumar0614jain.ems.entity.Address;
 import com.harshkumar0614jain.ems.entity.Employee;
+import com.harshkumar0614jain.ems.enums.Department;
 import com.harshkumar0614jain.ems.enums.EmployeeStatus;
+import com.harshkumar0614jain.ems.exception.BusinessException;
 import com.harshkumar0614jain.ems.exception.ResourceAlreadyExistsException;
 import com.harshkumar0614jain.ems.exception.ResourceNotFoundException;
 import com.harshkumar0614jain.ems.model.AddressModel;
@@ -25,7 +27,7 @@ public class EmployeeService {
     @Autowired
     private UserRepository userRepo;
 
-    public EmployeeResponseModel mapToEmployeeResponse(Employee employee){
+    private EmployeeResponseModel mapToEmployeeResponse(Employee employee){
         return EmployeeResponseModel.builder()
                 .id(employee.getId())
                 .firstName(employee.getFirstName())
@@ -45,7 +47,7 @@ public class EmployeeService {
                 .build();
     }
 
-    public Address mapToAddress(AddressModel addressModel){
+    private Address mapToAddress(AddressModel addressModel){
         return Address.builder()
                 .street(addressModel.getStreet())
                 .city(addressModel.getCity())
@@ -55,7 +57,7 @@ public class EmployeeService {
                 .build();
     }
 
-    public AddressModel mapToAddressModel(Address address){
+    private AddressModel mapToAddressModel(Address address){
         return AddressModel.builder()
                 .street(address.getStreet())
                 .city(address.getCity())
@@ -75,7 +77,7 @@ public class EmployeeService {
             throw new ResourceAlreadyExistsException("userId","Employee already exists with this userId");
 
         if(employeeRepo.existsByMobileNumber(employeeRequest.getMobileNumber()))
-            throw new ResourceAlreadyExistsException("mobileNumber"," Mobile Number already exists"); 
+            throw new ResourceAlreadyExistsException("mobileNumber","Mobile Number already exists");
 
         Employee employee = Employee.builder()
                 .firstName(employeeRequest.getFirstName())
@@ -100,7 +102,7 @@ public class EmployeeService {
 
 
     public List<EmployeeResponseModel> findAllEmployee() {
-        return employeeRepo.findAll()
+        return employeeRepo.findByEmployeeStatusNot(EmployeeStatus.DELETED)
                 .stream()
                 .map(this::mapToEmployeeResponse)
                 .toList();
@@ -109,13 +111,18 @@ public class EmployeeService {
     public EmployeeResponseModel findByEmployeeId(String id) {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("employeeId",
-                        "Employee not found of this Id:-"+ id));
+                        "Employee not found with id: "+ id));
         return mapToEmployeeResponse(employee);
     }
 
     public EmployeeResponseModel updateEmployee(String id,EmployeeUpdateRequestModel updateRequest) {
         Employee employee = employeeRepo.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Employee Id", "No employee was found of this id:-"+ id));
+                .orElseThrow(()-> new ResourceNotFoundException("Employee Id",
+                        "Employee not found with id: "+ id));
+
+//      Check employee status is not deleted
+        if(employee.getEmployeeStatus() == EmployeeStatus.DELETED)
+            throw new BusinessException("employeeStatus","Cannot update a deleted employee");
 
         if(updateRequest.getMobileNumber() != null)
             employee.setMobileNumber(updateRequest.getMobileNumber());
@@ -144,8 +151,18 @@ public class EmployeeService {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(() ->new ResourceNotFoundException("Employee Id", "Invalid Employee Id"));
 
+//      Check employee status is already deleted
+        if(employee.getEmployeeStatus() == EmployeeStatus.DELETED)
+            throw new BusinessException("employeeStatus","Employee is already deleted");
         employee.setEmployeeStatus(EmployeeStatus.DELETED);
 
         employeeRepo.save(employee);
+    }
+
+    public List<EmployeeResponseModel> findByDepartment(Department department) {
+        return employeeRepo.findByDepartmentAndEmployeeStatusNot(department,EmployeeStatus.DELETED)
+                .stream()
+                .map(this::mapToEmployeeResponse)
+                .toList();
     }
 }
