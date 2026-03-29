@@ -1,6 +1,5 @@
 package com.harshkumar0614jain.ems.controller;
 
-import com.harshkumar0614jain.ems.enums.Role;
 import com.harshkumar0614jain.ems.model.LeaveDecisionRequestModel;
 import com.harshkumar0614jain.ems.model.LeaveRequestModel;
 import com.harshkumar0614jain.ems.model.LeaveResponseModel;
@@ -26,7 +25,7 @@ public class LeaveRequestController {
             @Valid @RequestBody LeaveRequestModel requestModel){
 
         LeaveResponseModel leaveResponseModel = leaveRequestService
-                .createLeaveRequest(requestModel);
+                .applyLeave(requestModel);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
                 "Leave Request Created Successfully", leaveResponseModel );
@@ -35,12 +34,10 @@ public class LeaveRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseModel<List<LeaveResponseModel>>> getAllLeaveRequests(
-            @RequestParam Role role,
-            @RequestParam(required = false) String employeeId) {
+    public ResponseEntity<ResponseModel<List<LeaveResponseModel>>> getAllLeaveRequests() {
 
         List<LeaveResponseModel> list = leaveRequestService
-                .findAllLeaveRequest(role,employeeId);
+                .findAllLeaveRequest();
 
         ResponseModel<List<LeaveResponseModel>> response = new ResponseModel<>(
                 "List retrieved successfully", list);
@@ -53,7 +50,7 @@ public class LeaveRequestController {
     public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(
             @PathVariable String leaveRequestId) {
         LeaveResponseModel leaveDetails = leaveRequestService
-                .getLeaveDetails(leaveRequestId);
+                .getLeaveDetailsById(leaveRequestId);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
                 "Leave details is fetched successfully", leaveDetails);
@@ -63,10 +60,10 @@ public class LeaveRequestController {
     @PatchMapping("/{leaveRequestId}/decision")
     public ResponseEntity<ResponseModel<LeaveResponseModel>> leaveRequestDecision(
             @PathVariable String leaveRequestId,
-            @RequestBody LeaveDecisionRequestModel  requestModel) {
+            @RequestBody @Valid LeaveDecisionRequestModel requestModel) {
 
         LeaveResponseModel updatedLeave = leaveRequestService
-                .decideLeaveRequest(leaveRequestId,requestModel);
+                .approveOrRejectLeave(leaveRequestId, requestModel);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
                 "Leave Request is updated",updatedLeave);
