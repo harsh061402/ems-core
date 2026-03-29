@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -31,11 +31,11 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ResponseModel<UserResponseModel>> getUser(@PathVariable String userId){
+    public ResponseEntity<ResponseModel<UserResponseModel>> getUserById(@PathVariable String userId){
 
         UserResponseModel user = userService.getUserById(userId);
         ResponseModel<UserResponseModel>  response = new ResponseModel<>(
-                "User is found", user);
+                "User fetched successfully", user);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -45,29 +45,29 @@ public class UserController {
 
         UserResponseModel userCreated = userService.createUser(userRequest);
         ResponseModel<UserResponseModel>  response = new ResponseModel<>(
-                "User is created successfully", userCreated);
+                "User created successfully", userCreated);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/update/{userId}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<ResponseModel<UserResponseModel>> updateUser(
             @RequestBody @Valid UserUpdateRequestModel updateRequest,
             @PathVariable String userId){
 
         UserResponseModel userUpdated = userService.updateUser(updateRequest,userId);
         ResponseModel<UserResponseModel>  response = new ResponseModel<>(
-                "User is updated successfully", userUpdated );
+                "User updated successfully", userUpdated );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ResponseModel<Void>> deleteUser(@PathVariable String userId){
 
         userService.deleteUser(userId);
         ResponseModel<Void>  response = new ResponseModel<>(
-                "User is deleted successfully",
+                "User deleted successfully",
                 null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
