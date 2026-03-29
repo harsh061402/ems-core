@@ -109,7 +109,7 @@ public class UserService {
 //      Check user status is deleted or not
         if(user.getStatus() == UserStatus.DELETED)
             throw new BusinessException("userId",
-                    "Cannot update a deleted user");
+                    "User is already deleted");
 
         user.setStatus(UserStatus.DELETED);
 
