@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/leave")
+@RequestMapping("/api/leave-requests")
 public class LeaveRequestController {
 
     @Autowired
     private LeaveRequestService leaveRequestService;
 
     @PostMapping
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> createLeaveRequest(
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> applyLeaveRequest(
             @Valid @RequestBody LeaveRequestModel requestModel){
 
         LeaveResponseModel leaveResponseModel = leaveRequestService
                 .applyLeave(requestModel);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
-                "Leave Request Created Successfully", leaveResponseModel );
+                "Leave request created successfully", leaveResponseModel );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -40,20 +40,29 @@ public class LeaveRequestController {
                 .findAllLeaveRequest();
 
         ResponseModel<List<LeaveResponseModel>> response = new ResponseModel<>(
-                "List retrieved successfully", list);
+                "All leave request retrieved successfully", list);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
 
     }
 
     @GetMapping("/{leaveRequestId}")
-    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequest(
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> getLeaveRequestById(
             @PathVariable String leaveRequestId) {
         LeaveResponseModel leaveDetails = leaveRequestService
                 .getLeaveDetailsById(leaveRequestId);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
-                "Leave details is fetched successfully", leaveDetails);
+                "Leave details retrieved successfully", leaveDetails);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<ResponseModel<List<LeaveResponseModel>>> getAllLeaveRequestsByEmployeeId(
+            @PathVariable String employeeId) {
+        List<LeaveResponseModel> allLeavesOfEmployee = leaveRequestService.findLeaveRequestByEmployeeId(employeeId);
+        ResponseModel<List<LeaveResponseModel>> response = new ResponseModel<>(
+                "All leave requests retrieved successfully", allLeavesOfEmployee);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
@@ -66,7 +75,17 @@ public class LeaveRequestController {
                 .approveOrRejectLeave(leaveRequestId, requestModel);
 
         ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
-                "Leave Request is updated",updatedLeave);
+                "Leave request updated successfully",updatedLeave);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PatchMapping("/{leaveRequestId}/cancel")
+    public ResponseEntity<ResponseModel<LeaveResponseModel>> cancelLeaveRequest(
+            @PathVariable String leaveRequestId) {
+
+        LeaveResponseModel cancelledLeave = leaveRequestService.cancelLeave(leaveRequestId);
+        ResponseModel<LeaveResponseModel> response = new ResponseModel<>(
+                "Leave request cancelled successfully", cancelledLeave);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
